@@ -10,6 +10,8 @@ function App() {
   const [surpriseMode, setSurpriseMode] = useState(false);
   const [favoritos, setFavoritos] = useState([]);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
+  const [catSurpriseImages, setCatSurpriseImages] = useState([]);
+
 
 
   // Estados para tamagotchi
@@ -43,14 +45,17 @@ function App() {
     setTimeout(() => setAnimating(false), 1200);
   }
 
-  // Para modo surpresa - mostra várias imagens animadas
-  const catSurpriseImages = [
-    'https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg',
-    'https://cdn2.thecatapi.com/images/MTY3ODI1OQ.jpg',
-    'https://cdn2.thecatapi.com/images/MTY3ODI0NQ.jpg',
-    'https://cdn2.thecatapi.com/images/MTY3ODI3Nw.jpg',
-    'https://cdn2.thecatapi.com/images/MTY3ODI3OQ.jpg',
-  ];
+  async function fetchCatData() {
+    try {
+      const response = await fetch('https://api.thecatapi.com/v1/images/search?limit=5');
+      const data = await response.json();
+      const imageUrls = data.map(cat => cat.url);
+      setCatSurpriseImages(imageUrls);
+    }
+    catch (error) {
+      console.error('Erro ao buscar imagens:', error);
+    }
+  }
 
   // Muda o tema e também o modo surpresa
   function toggleSurpriseMode() {
@@ -111,7 +116,7 @@ function App() {
     <div
       className={`app ${theme}`}
       style={{
-        height: '100vh',
+        minHeight: '100vh',
         width: '100vw',
         boxSizing: 'border-box',
         padding: '2rem 4rem 2rem 2rem',
@@ -122,7 +127,7 @@ function App() {
         color: theme === 'dark' ? '#eee' : '#222',
         transition: 'background-color 0.3s, color 0.3s',
         position: 'relative',
-        overflow: 'hidden',
+        overflowY: 'auto',
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       }}
     >
