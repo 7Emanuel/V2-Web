@@ -92,18 +92,27 @@ function App() {
   function feedCat() {
     setTamaMessage('Mmmm, obrigado pela comida! 😸');
     setTamaAnimation('feed');
+    const audio = new Audio('/sounds/alimentar.mp3');
+    audio.play();
+
     setTimeout(() => setTamaAnimation(null), 1000);
   }
 
   function petCat() {
     setTamaMessage('Ronronando... Muito gostoso! 🐾');
     setTamaAnimation('pet');
+    const audio = new Audio('/sounds/acariciar.mp3');
+    audio.play();
+
     setTimeout(() => setTamaAnimation(null), 1000);
   }
 
   function playCat() {
     setTamaMessage('Vamos brincar! 🎾');
     setTamaAnimation('play');
+    const audio = new Audio('/sounds/brincar.mp3');
+    audio.play();
+
     setTimeout(() => setTamaAnimation(null), 1000);
   }
 
