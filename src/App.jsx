@@ -96,6 +96,7 @@ function App() {
 
   function handleShowFavorites() {
   const storedFavorites = JSON.parse(localStorage.getItem('favoritos')) || [];
+  console.log('Favoritos carregados:', storedFavorites);
   setFavoritos(storedFavorites);
   setShowFavoritesModal(true); 
   }
@@ -367,7 +368,7 @@ function App() {
             {favoritos.length === 0 ? (<p>Você ainda não tem favoritos. 🐾</p>
             ) : (
               <ul style={{ listStyleType: 'none', padding: 0 }}>
-              {favorites.map((fav, index) => (
+              {favoritos.map((fav, index) => (
                 <li 
                 key={index}
                 style={{
