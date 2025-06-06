@@ -10,8 +10,7 @@ function App() {
   const [surpriseMode, setSurpriseMode] = useState(false);
   const [favoritos, setFavoritos] = useState([]);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
-  const [catSurpriseImages, setCatSurpriseImages] = useState([]);
-
+  const [catSurpriseImages, setCatSurpriseImages] = useState([]); 
 
 
   // Estados para tamagotchi
@@ -45,15 +44,26 @@ function App() {
     setTimeout(() => setAnimating(false), 1200);
   }
 
-  async function fetchCatData() {
+  async function fetchCatSurpriseImages() {
+    setLoading(true);
     try {
-      const response = await fetch('https://api.thecatapi.com/v1/images/search?limit=5');
-      const data = await response.json();
-      const imageUrls = data.map(cat => cat.url);
-      setCatSurpriseImages(imageUrls);
+      const responses = await Promise.all([
+        fetch('https://api.thecatapi.com/v1/images/search'),
+        fetch('https://api.thecatapi.com/v1/images/search'),
+        fetch('https://api.thecatapi.com/v1/images/search'),
+        fetch('https://api.thecatapi.com/v1/images/search'),
+        fetch('https://api.thecatapi.com/v1/images/search'),
+        fetch('https://api.thecatapi.com/v1/images/search'),
+      ]);
+      const data = await Promise.all(responses.map(r => r.json()));
+      const urls = data.map(d => d[0].url);
+      setCatSurpriseImages(urls);
+    } catch (error) {
+      console.error('Erro ao buscar imagens surpresa', error);
+      setCatSurpriseImages([]);
     }
-    catch (error) {
-      console.error('Erro ao buscar imagens:', error);
+    finally {
+      setLoading(false);
     }
   }
 
@@ -61,6 +71,8 @@ function App() {
   function toggleSurpriseMode() {
     if (surpriseMode) {
       fetchCatData();
+    } else {
+      fetchCatSurpriseImages();
     }
     setSurpriseMode(!surpriseMode);
   }
@@ -100,10 +112,10 @@ function App() {
   }, []);
 
   function handleShowFavorites() {
-  const storedFavorites = JSON.parse(localStorage.getItem('favoritos')) || [];
-  console.log('Favoritos carregados:', storedFavorites);
-  setFavoritos(storedFavorites);
-  setShowFavoritesModal(true); 
+    const storedFavorites = JSON.parse(localStorage.getItem('favoritos')) || [];
+    console.log('Favoritos carregados:', storedFavorites);
+    setFavoritos(storedFavorites);
+    setShowFavoritesModal(true);
   }
 
   function handleCloseFavorites() {
@@ -351,6 +363,7 @@ function App() {
             maxHeight: '80%',
             overflowY: 'auto',
             color: '#fff',
+            position: 'relative'
           }}
           >
 
