@@ -349,7 +349,7 @@ function App() {
           >
 
             <h2>⭐ Meus Favoritos</h2>
-            <button onClick={() => handleCloseFavorites}
+            <button onClick={() => handleCloseFavorites()}
             style={{
               background: 'transparent',
               border: 'none',
