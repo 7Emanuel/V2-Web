@@ -131,7 +131,18 @@ function App() {
     setShowFavoritesModal(false);
   }
 
+  function removeFavorite(indexToRemove) {
+    const updatedFavorites = favoritos.filter((_, index) => index !== indexToRemove);
+    setFavoritos(updatedFavorites);
+    localStorage.setItem('favoritos', JSON.stringify(updatedFavorites));
+  }
 
+  function selectFavorite(fav) {
+    setFact(fav.fact);
+    setImageUrl(fav.image);
+    setShowFavoritesModal(false);
+    setSurpriseMode(false);
+  }
 
   return (
     <div
@@ -376,7 +387,17 @@ function App() {
           }}
           >
 
-            <h2>⭐ Meus Favoritos</h2>
+            <h2
+            style={{ textAlign: 'center',
+              marginTop: "-20px"
+             }}
+            >⭐ Meus Favoritos</h2>
+
+            <h2
+            style={{ textAlign: 'center',
+             }}
+            >clique no fato para retornar ao fato</h2>
+
             <button onClick={() => handleCloseFavorites()}
             style={{
               background: 'transparent',
@@ -403,6 +424,14 @@ function App() {
                   padding: '1rem',
                   borderRadius: '8px',
                   marginBottom: '0.5rem',
+                  cursor: 'pointer',
+                }}
+                onClick={() => selectFavorite(fav)}
+                tabIndex={0}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    selectFavorite(fav);
+                  }
                 }}
                 >
                 <p>{fav.fact}</p>
@@ -417,6 +446,28 @@ function App() {
                     }}
                   />
                 )}
+
+                {/* Botão remover favorito */}
+                <button
+                onClick={() => removeFavorite(index)}
+                style={{
+                  marginTop: '0.7rem',
+                  padding: '0.4rem 0.7rem',
+                  backgroundColor: '#e74c3c',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  display: 'block',
+                  marginLeft: 'auto',
+                  marginRight: 'auto' 
+                }}
+                aria-label={`Remover favorito número ${index + 1}`}
+                >
+                  Remover dos favoritos
+                </button>
+
                 </li>
             ))}
           </ul>
