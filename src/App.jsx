@@ -11,6 +11,25 @@ function App() {
   const [favoritos, setFavoritos] = useState([]);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const [catSurpriseImages, setCatSurpriseImages] = useState([]); 
+  const [clickCount, setClickCount] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+
+  const CLICK_TIMEOUT = 1500;
+  useEffect(() => {
+    if (clickCount === 5) {
+      setShowModal(true);
+      setClickCount(0);
+    }
+    if (clickCount > 0) {
+      const timer = setTimeout(() => {
+        setClickCount(0);
+      }, CLICK_TIMEOUT);
+
+      return () => clearTimeout(timer);
+    }
+  }, [clickCount]);
+
+  
 
 
   // Estados para tamagotchi
@@ -67,6 +86,8 @@ function App() {
     }
   }
 
+
+
   // Muda o tema e também o modo surpresa
   function toggleSurpriseMode() {
     if (surpriseMode) {
@@ -120,6 +141,8 @@ function App() {
     fetchCatData();
   }, []);
 
+
+
   function handleShowFavorites() {
     const storedFavorites = JSON.parse(localStorage.getItem('favoritos')) || [];
     console.log('Favoritos carregados:', storedFavorites);
@@ -143,6 +166,29 @@ function App() {
     setShowFavoritesModal(false);
     setSurpriseMode(false);
   }
+
+  const handleButtonClick = () => {
+    const newFavorite = { fact, image: imageUrl };
+    const updatedFavorites = [...favoritos, newFavorite];
+    setFavoritos(updatedFavorites);
+    localStorage.setItem('favoritos', JSON.stringify(updatedFavorites));
+
+    setClickCount(prev => prev + 1);
+  }
+
+  function selectFavorite(item) {
+    const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+    const existe = favoritos.some(fav => fav.fact === item.fact && fav.image === item.image);
+
+    if (!existe) {
+      favoritos.push(item);
+      localStorage.setItem('favoritos', JSON.stringify(favoritos));
+      console.log("Item adicionado aos favoritos");
+    } else {
+      console.log("Item já está nos favoritos");
+    }
+  }
+
 
   return (
     <div
@@ -255,7 +301,11 @@ function App() {
             className={fade ? 'fade show' : 'fade'}
           >
             <h1 style={{ fontWeight: '700', fontSize: '2rem', marginBottom: '0.5rem' }}>
-              <span role="img" aria-label="cat">
+              <span
+               role="img"
+               aria-label="cat"
+
+               >
                 🐱
               </span>{' '}
               Fato Aleatório de Gato
@@ -327,36 +377,88 @@ function App() {
       )}
 
       {/* Botão favoritos */}
+      <div style={{ padding: '2rem' }}>
+        <button 
+          onClick={() => { 
+            handleButtonClick();
+            const newFavorite = { fact, image: imageUrl };
+            const updatedFavorites = [...favoritos, newFavorite];
+            setFavoritos(updatedFavorites);
+            localStorage.setItem('favoritos', JSON.stringify(updatedFavorites));
+          }} 
 
-      <button 
-      
-         onClick={() => { 
-          const newFavorite = { fact, image: imageUrl };
-          const updatedFavorites = [...favoritos, newFavorite];
-          setFavoritos(updatedFavorites);
-          localStorage.setItem('favoritos', JSON.stringify(updatedFavorites));
-         }}
 
-         style={{
-          background: '#8e44ad',
-          color: '#fff',
-          padding: '0.8rem 1.2rem',
-          fontSize: '1rem',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          transition: 'background-color 0.3s, color 0.3s',
-          userSelect: 'none',
-          marginLeft: '0rem',
-          marginTop: '1rem'
-          
-         }}
-      
-      >
 
-        ❤️ Favoritar
+          style={{
+            background: '#8e44ad',
+            color: '#fff',
+            padding: '0.8rem 1.2rem',
+            fontSize: '1rem',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s, color 0.3s',
+            userSelect: 'none',
+            marginLeft: '0rem',
+            marginTop: '1rem'
+            
+          }}
+        
+        >
 
-      </button>
+          ❤️ Favoritar
+
+        </button>
+
+        {showModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0, left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(33, 33, 33, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              background: '#808080',
+              padding: '2rem',
+              borderRadius: '8px',
+              textAlign: 'center'
+            }}>
+
+            <h2>🎉 Parabéns!</h2>
+            <p>Você encontrou o "easter egg"! 🥳</p>
+            <p><img src="public/sounds/easter egg.jpeg" alt="Easter Egg" 
+            style={{
+              maxWidth: '20%',
+              height: 'auto',
+              marginTop: '1rem',
+              borderRadius: '8px',
+              margin: '1rem auto',
+              display: 'block',
+            }}
+            /></p>
+            <p>🥳 Shanth desbloqueada! 🥳</p>
+            <button onClick={() => setShowModal(false)} style={{
+              marginTop: '1rem',
+              background: '#8e44ad',
+              color: '#fff',
+              padding: '0.5rem 1rem',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+            }}>
+              Fechar
+            </button>
+            </div>
+          </div>
+        
+        )}
+
+      </div>
 
       {showFavoritesModal && (
 
@@ -416,7 +518,10 @@ function App() {
             {favoritos.length === 0 ? (<p>Você ainda não tem favoritos. 🐾</p>
             ) : (
               <ul style={{ listStyleType: 'none', padding: 0 }}>
-              {favoritos.map((fav, index) => (
+                {Array.from(
+                  new Map(favoritos.map(fav => [fav.fact, fav])).values()
+                )
+                .map((fav, index) => (
                 <li 
                 key={index}
                 style={{
@@ -445,7 +550,9 @@ function App() {
                       marginTop: '0.5rem',
                     }}
                   />
+                  
                 )}
+                
 
                 {/* Botão remover favorito */}
                 <button
@@ -469,7 +576,8 @@ function App() {
                 </button>
 
                 </li>
-            ))}
+              ))}
+            
           </ul>
           )}
           
