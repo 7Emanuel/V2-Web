@@ -431,7 +431,7 @@ function App() {
 
             <h2>🎉 Parabéns!</h2>
             <p>Você encontrou o "easter egg"! 🥳</p>
-            <p><img src="public/sounds/easter egg.jpeg" alt="Easter Egg" 
+            <p><img src="/sounds/easter-egg.jpeg" alt="Easter Egg" 
             style={{
               maxWidth: '20%',
               height: 'auto',
@@ -441,7 +441,7 @@ function App() {
               display: 'block',
             }}
             /></p>
-            <p>🥳 Shanth desbloqueada! 🥳</p>
+            <p>🥳 Shanty desbloqueada! 🥳</p>
             <button onClick={() => setShowModal(false)} style={{
               marginTop: '1rem',
               background: '#8e44ad',
