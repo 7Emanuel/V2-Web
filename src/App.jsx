@@ -137,9 +137,24 @@ function App() {
     setTimeout(() => setTamaAnimation(null), 1000);
   }
 
+  function eggCat() {
+    setTamaMessage('Easter Egg encontrado!');
+    setTamaAnimation('premio');
+    const audio = new Audio('/sounds/premio.mp3');
+    audio.play();
+
+    setTimeout(() => setTamaAnimation(null), 1000);
+  }
+
   useEffect(() => {
     fetchCatData();
   }, []);
+
+  useEffect(() => {
+    if (showModal) {
+      eggCat();
+    }
+  }, [showModal] );
 
 
 
